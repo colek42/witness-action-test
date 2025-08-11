@@ -22,6 +22,16 @@ The comprehensive guide covering:
 - Multi-KMS support (AWS, Azure, GCP, Vault)
 - GitHub Actions integration
 - NIST compliance metadata generation
+- SBOM generation and attestation
+- Security scanning integration
+
+### [SBOM and Security Guide](docs/SBOM-AND-SECURITY-ATTESTATIONS.md)
+Detailed documentation for:
+- Software Bill of Materials (SBOM) generation
+- Secret scanning with blocklists
+- Vulnerability attestations (SARIF, VEX)
+- SLSA provenance with SBOM
+- Complete security workflows
 
 ## 🎯 Live Examples
 
@@ -40,6 +50,7 @@ Browse the [`examples/scripts/`](examples/scripts/) directory for ready-to-run s
 - `test-rpm-signing.sh` - Basic RPM signing with ED25519 keys
 - `test-fulcio-keyless.sh` - Keyless signing with Fulcio (browser auth)
 - `test-tsa-signing.sh` - TSA counter-signing validation
+- `test-sbom-rpm.sh` - SBOM generation and attestation for RPMs
 
 ## 🔑 Key Features Demonstrated
 

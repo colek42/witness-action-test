@@ -271,6 +271,47 @@ tar czf ${BUNDLE}.tar.gz ${BUNDLE}/
 sha256sum ${BUNDLE}.tar.gz > ${BUNDLE}.tar.gz.sha256
 ```
 
+## SBOM and Security Attestations
+
+### Generate SBOM for RPMs
+
+Witness integrates with Syft to generate Software Bill of Materials:
+
+```bash
+# Install Syft
+brew install syft  # or use curl installer
+
+# Build RPM first
+witness run --step build \
+  -o attestation-build.json \
+  -a environment,material,command-run,product \
+  --signer-file-key-path key.pem \
+  -- rpmbuild -bb package.spec
+
+# Generate SBOM with attestation
+witness run --step sbom \
+  -o attestation-sbom.json \
+  -a material,command-run,product,sbom \
+  --attestor-sbom-export \
+  --signer-file-key-path key.pem \
+  -- syft packages package.rpm -o spdx-json > sbom.json
+```
+
+### Security Scanning
+
+Include secret scanning and vulnerability detection:
+
+```bash
+witness run --step security-scan \
+  -a material,command-run,product,secretscan,sarif \
+  --attestor-secretscan-fail-on-detection \
+  --attestor-secretscan-allowlist-regex "test.*" \
+  --signer-file-key-path key.pem \
+  -- make build
+```
+
+**See [SBOM and Security Attestations Guide](SBOM-AND-SECURITY-ATTESTATIONS.md) for complete documentation.**
+
 ## Enterprise Features
 
 ### Archivista Integration
