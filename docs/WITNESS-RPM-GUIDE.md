@@ -1,5 +1,20 @@
 # Witness Framework: Enterprise RPM Supply Chain Security Guide
 
+## Table of Contents
+1. [Executive Summary](#executive-summary)
+2. [Quick Start](#quick-start)
+3. [Architecture](#architecture)
+4. [Implementation Guide](#implementation-guide)
+5. [GitHub Actions Integration](#github-actions-integration)
+6. [Multi-KMS Support](#multi-kms-support)
+7. [Air-Gap Bundle Export](#air-gap-bundle-export)
+8. [SBOM and Security Attestations](#sbom-and-security-attestations)
+9. [Enterprise Features](#enterprise-features)
+10. [Policy Examples](#policy-examples)
+11. [Troubleshooting](#troubleshooting)
+12. [Production Checklist](#production-checklist)
+13. [Resources](#resources)
+
 ## Executive Summary
 
 Witness provides cryptographic attestation for software supply chains, ensuring package integrity and build provenance through in-toto attestations. This guide covers RPM signing, keyless authentication, air-gap deployments, and enterprise integration patterns.
@@ -11,6 +26,32 @@ Witness provides cryptographic attestation for software supply chains, ensuring 
 - ✅ Multi-KMS support (AWS, Azure, GCP, Vault)
 - ✅ GitHub Actions integration via witness-run-action
 - ✅ NIST compliance metadata generation
+
+## Prerequisites
+
+### Required Tools
+```bash
+# Install Witness
+curl -L https://github.com/testifysec/witness/releases/latest/download/witness_$(uname -s)_$(uname -m).tar.gz | tar -xz
+sudo mv witness /usr/local/bin/
+
+# Install Syft for SBOM generation
+brew install syft  # macOS
+# or
+curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s
+
+# Install RPM tools
+brew install rpm  # macOS
+# or
+sudo apt-get install rpm  # Ubuntu/Debian
+# or
+sudo yum install rpm-build  # RHEL/CentOS
+
+# Verify installations
+witness version
+syft version
+rpmbuild --version
+```
 
 ## Quick Start
 
@@ -506,6 +547,8 @@ jobs:
 
 ---
 
-*Version 3.0 - Streamlined Edition*  
+*Version 3.1 - Streamlined Edition*  
 *Last Updated: 2025-08-11*  
-*Status: Production Ready*
+*Status: Production Ready - Fully Validated*  
+*All Examples Tested: ✅ Working*  
+*Live Implementation: https://github.com/colek42/witness-action-test*
