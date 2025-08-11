@@ -1,0 +1,53 @@
+{
+  "expires": "2026-12-31T23:59:59Z",
+  "steps": {
+    "test": {
+      "attestations": [
+        {"type": "https://witness.dev/attestations/environment/v0.1"},
+        {"type": "https://witness.dev/attestations/git/v0.1"},
+        {"type": "https://witness.dev/attestations/github/v0.1"}
+      ],
+      "functionaries": [
+        {
+          "type": "keyless",
+          "certConstraints": {
+            "uris": ["https://github.com/*/.github/workflows/*@*"]
+          }
+        }
+      ]
+    },
+    "build": {
+      "attestations": [
+        {"type": "https://witness.dev/attestations/material/v0.1"},
+        {"type": "https://witness.dev/attestations/command-run/v0.1"},
+        {"type": "https://witness.dev/attestations/product/v0.1"}
+      ],
+      "functionaries": [
+        {
+          "type": "keyless",
+          "certConstraints": {
+            "uris": ["https://github.com/*/.github/workflows/*@*"]
+          }
+        }
+      ]
+    },
+    "package": {
+      "attestations": [
+        {"type": "https://witness.dev/attestations/material/v0.1"},
+        {"type": "https://witness.dev/attestations/command-run/v0.1"},
+        {"type": "https://witness.dev/attestations/product/v0.1"}
+      ],
+      "functionaries": [
+        {
+          "type": "keyless",
+          "certConstraints": {
+            "uris": ["https://github.com/*/.github/workflows/*@*"]
+          }
+        }
+      ]
+    }
+  },
+  "roots": {
+    "fulcio": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNHakNDQWFDZ0F3SUJBZ0lVQUxuVmlWZm5VMGJySmFxY2RZaHJTSkJEc1k0d0NnWUlLb1pJemowRUF3TXcKS2pFVk1CTUdBMVVFQ2hNTWMybG5jM1J2Y21VdVpHVjJNUkV3RHdZRFZRUURFd2h6YVdkemRHOXlaVEFlRncweQpNVEF6TURjeE56VTFOVGRhRncwek1UQXlNak15TXpVNU5UbGFNRFl4RkRBU0JnTlZCQW9UQzNOcFozTjBiM0psCkxtUmxkakVlTUJ3R0ExVUVBeE1WYzJsbmMzUnZjbVV0YVc1MFpYSnRaV1JwWVhSbE1IWXdFQVlIS29aSXpqMEMKQVFZRks0RUVBQ0lEWWdBRThSVlMveXNIK05PdnVEWnlQSVp0aWxnVUY5TmxhcllwQWQ5SFAxdkJCSDFVNUNWCjc3TDVFMDM1MWZJOWNrUmtIdEtRMHR3WjFnUmlxckl3L0tnNGJSVThiRWxJeEFMWTBJZUVGU3RmRVBva2owCmhCZFVLaTdOSEU1cGlTN1JRWmIyK0RGTzdRYjZZdUF1WGo3ODltR2dhZnRWbzJJd1lEQU9CZ05WSFE4QkFmOEUKQkFNQ0FRWXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUhBd013RWdZRFZSMFRBUUgvQkFnd0JnRUIvd0lCQURBZApCZ05WSFE0RUZnUVUzOUhtcjVmYWhGMkQzNkM1Z3dIUEZ1WUlGOE13SFFZRFZSMGpCQll3RklBVVdNQWVYNUZGCnBXYXAwc1lCSVgwSldtQnVOQnN3Q2dZSUtvWkl6ajBFQXdNRGFBQXdaUUl3UGJjeTRFUHhuZ0NFTG1XTVRMNUcKdDZucmlmeUE1N3hpYy90MUl5bnJWM0g1bFBNZGRGUGJTVGZ1dUdGYWRrdkFpRUE3cVkzc0tNa0RzVDJmZFlKCmtJMUp6TktPckltV0MxYVdCdHBsdHlFWDhRbz0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ=="
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "expires": "2026-12-31T23:59:59Z",
+  "steps": {
+    "build": {
+      "attestations": [
+        {"type": "https://witness.dev/attestations/material/v0.1"},
+        {"type": "https://witness.dev/attestations/command-run/v0.1"},
+        {"type": "https://witness.dev/attestations/product/v0.1"}
+      ],
+      "functionaries": [
+        {"type": "publickey", "publickeyid": "REPLACE_WITH_KEY_ID"}
+      ]
+    }
+  },
+  "publickeys": {
+    "REPLACE_WITH_KEY_ID": {
+      "keyid": "REPLACE_WITH_KEY_ID",
+      "key": "REPLACE_WITH_BASE64_PUBLIC_KEY"
+    }
+  }
+}
