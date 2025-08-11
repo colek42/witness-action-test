@@ -1,0 +1,5 @@
+test-results.txt
+app.sh
+app.tar.gz
+*.log
+.DS_Store

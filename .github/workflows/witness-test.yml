@@ -1,0 +1,88 @@
+name: Test Witness Action
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  test-witness-action:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write    # REQUIRED for Fulcio OIDC
+      contents: read     # Access repository
+      actions: read      # Read workflow
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Test Step with Witness
+      uses: testifysec/witness-run-action@v0.1.5
+      with:
+        step: test
+        command: make test
+    
+    - name: Build Step with Witness
+      uses: testifysec/witness-run-action@v0.1.5
+      with:
+        step: build
+        command: make build
+    
+    - name: Package Step with Witness
+      uses: testifysec/witness-run-action@v0.1.5
+      with:
+        step: package
+        command: make package
+    
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: witness-test-artifacts
+        path: |
+          app.tar.gz
+          test-results.txt
+        retention-days: 1
+    
+    - name: Summary
+      run: |
+        echo "## Witness Test Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Test step completed with attestation" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Build step completed with attestation" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Package step completed with attestation" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Attestations have been:" >> $GITHUB_STEP_SUMMARY
+        echo "- Signed with Fulcio (keyless)" >> $GITHUB_STEP_SUMMARY
+        echo "- Stored in Archivista" >> $GITHUB_STEP_SUMMARY
+        echo "- Timestamped with TSA" >> $GITHUB_STEP_SUMMARY
+
+  test-witness-manual-config:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Test with Explicit Config
+      uses: testifysec/witness-run-action@v0.1.5
+      with:
+        step: explicit-test
+        command: |
+          echo "Testing with explicit configuration"
+          make test
+        enable-sigstore: true      # Explicit (but default)
+        enable-archivista: true    # Explicit (but default)
+    
+    - name: Test without Archivista
+      uses: testifysec/witness-run-action@v0.1.5
+      with:
+        step: no-archivista-test
+        command: |
+          echo "Testing without Archivista storage"
+          make test
+        enable-archivista: false   # Disable Archivista
