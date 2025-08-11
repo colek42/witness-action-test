@@ -114,7 +114,8 @@ cp "$BUILT_RPM" ${TEST_RPM}
 echo -e "${GREEN}✓ RPM built: ${TEST_RPM}${NC}"
 
 echo -e "${YELLOW}Step 5: Generate SBOM with Witness attestation${NC}"
-# The SBOM attestor will detect the SBOM file created during the command
+# The SBOM attestor will detect the SBOM files created during the command
+# Using 'syft scan' (new command) instead of deprecated 'syft packages'
 echo "Generating SBOM with attestation..."
 witness run --step sbom-generation \
     -c config.yaml \
@@ -122,34 +123,51 @@ witness run --step sbom-generation \
     -a material,command-run,product,sbom \
     --attestor-sbom-export \
     --signer-file-key-path ${KEY_NAME}.pem \
-    -- sh -c "syft packages ${TEST_RPM} -o json > ${SBOM_FILE} && syft packages ${TEST_RPM} -o spdx-json > sbom-spdx.json"
+    -- bash -c "
+        syft scan ${TEST_RPM} -o json > ${SBOM_FILE}
+        syft scan ${TEST_RPM} -o spdx-json > sbom.spdx.json
+        syft scan ${TEST_RPM} -o cyclonedx-json > sbom.cdx.json
+    "
 
 echo -e "${GREEN}✓ SBOM generated and attested${NC}"
 
 # Display SBOM summary
 echo -e "${BLUE}SBOM Summary:${NC}"
-syft packages ${TEST_RPM} -q
+syft scan ${TEST_RPM} -q
 
 echo -e "${GREEN}✓ SBOM attestation created${NC}"
 
 echo -e "${YELLOW}Step 7: Extract and analyze attestations${NC}"
-# Extract SBOM from attestation
-echo "Extracting SBOM data from attestation..."
+# Check for exported SBOM attestation file
+if [ -f "attestation-sbom.json-sbom.json" ]; then
+    echo -e "${GREEN}✓ Exported SBOM attestation found: attestation-sbom.json-sbom.json${NC}"
+    
+    # Extract SBOM content
+    echo "Extracting SBOM data from exported attestation..."
+    cat attestation-sbom.json-sbom.json | jq -r '.payload' | base64 -d > sbom-attestation-content.json
+    
+    # Display SBOM type
+    SBOM_TYPE=$(cat sbom-attestation-content.json | jq -r '.predicateType')
+    echo -e "${BLUE}SBOM Type: ${SBOM_TYPE}${NC}"
+    
+    # Display subjects
+    echo -e "${BLUE}SBOM Subjects:${NC}"
+    cat sbom-attestation-content.json | jq -r '.subject[]?.name'
+fi
+
+# Also check main attestation
+echo "Extracting data from main attestation..."
 cat attestation-sbom.json | jq -r '.payload' | base64 -d | jq '.predicate' > predicate-sbom.json
 
-# Check if SBOM attestor data is present
+# Check if SBOM attestor data is present in main attestation
 if cat predicate-sbom.json | jq -e '.attestations[] | select(.type == "https://witness.dev/attestations/sbom/v0.1")' > /dev/null 2>&1; then
-    echo -e "${GREEN}✓ SBOM attestation found in predicate${NC}"
+    echo -e "${GREEN}✓ SBOM attestation found in main predicate${NC}"
     
     # Extract SBOM details
     echo -e "${BLUE}SBOM Attestation Details:${NC}"
-    cat predicate-sbom.json | jq '.attestations[] | select(.type == "https://witness.dev/attestations/sbom/v0.1") | .attestation' > sbom-attestation.json
-    
-    # Display key information
-    echo "Components found:"
-    cat sbom-attestation.json | jq -r '.components[]?.name' 2>/dev/null || echo "No components in attestation"
+    cat predicate-sbom.json | jq '.attestations[] | select(.type == "https://witness.dev/attestations/sbom/v0.1") | .attestation'
 else
-    echo -e "${YELLOW}Note: SBOM attestation type not found, checking for SBOM in products${NC}"
+    echo -e "${YELLOW}Note: SBOM attestation embedded in main attestation collection${NC}"
 fi
 
 echo -e "${YELLOW}Step 8: Create a policy that requires SBOM${NC}"

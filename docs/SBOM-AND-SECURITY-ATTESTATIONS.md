@@ -27,7 +27,7 @@ witness run --step sbom-generation \
   -a environment,material,command-run,product,sbom \
   --attestor-sbom-export \
   --signer-file-key-path key.pem \
-  -- syft packages package.rpm -o json > sbom.json
+  -- bash -c "syft scan package.rpm -o spdx-json > sbom.spdx.json"
 ```
 
 The `--attestor-sbom-export` flag ensures the SBOM is exported as a separate attestation that can be queried independently. The SBOM attestor will automatically detect the SBOM file created by Syft.
@@ -42,18 +42,17 @@ brew install syft  # macOS
 # or
 curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s
 
-# Generate SBOM in different formats
-syft packages package.rpm -o spdx-json > sbom-spdx.json
-syft packages package.rpm -o cyclonedx-json > sbom-cyclonedx.json
-syft packages package.rpm -o json > sbom-syft.json
-
-# Create attestation for the SBOM
+# Generate SBOM in different formats with attestation
 witness run --step sbom-generation \
   -o sbom-attestation.json \
   -a material,command-run,product,sbom \
   --attestor-sbom-export \
   --signer-file-key-path key.pem \
-  -- syft packages package.rpm -o json
+  -- bash -c "
+    syft scan package.rpm -o spdx-json > sbom.spdx.json
+    syft scan package.rpm -o cyclonedx-json > sbom.cdx.json
+    syft scan package.rpm -o json > sbom.json
+  "
 ```
 
 ### 3. SBOM Formats Supported
